@@ -1,7 +1,6 @@
 package gcloudconf
 
 import (
-	"errors"
 	"fmt"
 
 	"google.golang.org/api/compute/v1"
@@ -30,7 +29,7 @@ func (e *metadataGetter) Get() (string, error) {
 	}
 	if appengineProject != nil {
 		proj := appengineProject(e.ctx)
-		hc, err := google.DefaultClient(e.ctx)
+		hc, err := google.DefaultClient(e.ctx, compute.ComputeScope)
 		if err != nil {
 			return "", err
 		}
@@ -50,7 +49,8 @@ func (e *metadataGetter) Get() (string, error) {
 		return "", conf.Missing
 	}
 	// TODO(cbro): figure out a way to get the project ID locally?
-	return "", errors.New("not running on Cloud")
+	//return "", errors.New("not running on Cloud")
+	return "", conf.Missing
 }
 
 func (e *metadataGetter) Usage() string {
