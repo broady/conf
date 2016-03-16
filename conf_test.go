@@ -60,7 +60,7 @@ type alwaysError struct {
 	e error
 }
 
-func (a alwaysError) Value() (string, error) {
+func (a alwaysError) Evaluate() (string, error) {
 	return "", a.e
 }
 

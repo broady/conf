@@ -12,18 +12,19 @@ import (
 	"github.com/broady/conf"
 )
 
-func Metadata(ctx context.Context, key string) conf.Value {
-	return &metadataValue{ctx, key}
+// Metadata retrieves the value from the project metadata, stored at the given key.
+func Metadata(ctx context.Context, key string) conf.Source {
+	return &metadataSource{ctx, key}
 }
 
-type metadataValue struct {
+type metadataSource struct {
 	ctx context.Context
 	key string
 }
 
 var appengineProject func(ctx context.Context) string
 
-func (e *metadataValue) Value() (string, error) {
+func (e *metadataSource) Evaluate() (string, error) {
 	if metadata.OnGCE() {
 		return metadata.ProjectAttributeValue(e.key)
 	}
@@ -53,6 +54,6 @@ func (e *metadataValue) Value() (string, error) {
 	return "", conf.Missing
 }
 
-func (e *metadataValue) Usage() string {
+func (e *metadataSource) Usage() string {
 	return fmt.Sprintf("Google Cloud project metadata variable %s", e.key)
 }
