@@ -12,18 +12,18 @@ import (
 	"github.com/broady/conf"
 )
 
-func Metadata(ctx context.Context, key string) conf.Getter {
-	return &metadataGetter{ctx, key}
+func Metadata(ctx context.Context, key string) conf.Value {
+	return &metadataValue{ctx, key}
 }
 
-type metadataGetter struct {
+type metadataValue struct {
 	ctx context.Context
 	key string
 }
 
 var appengineProject func(ctx context.Context) string
 
-func (e *metadataGetter) Get() (string, error) {
+func (e *metadataValue) Value() (string, error) {
 	if metadata.OnGCE() {
 		return metadata.ProjectAttributeValue(e.key)
 	}
@@ -53,6 +53,6 @@ func (e *metadataGetter) Get() (string, error) {
 	return "", conf.Missing
 }
 
-func (e *metadataGetter) Usage() string {
+func (e *metadataValue) Usage() string {
 	return fmt.Sprintf("Google Cloud project metadata variable %s", e.key)
 }

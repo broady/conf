@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func MustGet(g ...Getter) string {
+func MustGet(g ...Value) string {
 	v, err := Get(g...)
 	if err != nil {
 		panic(err)
@@ -15,15 +15,15 @@ func MustGet(g ...Getter) string {
 	return v
 }
 
-type Getter interface {
-	Get() (string, error)
+type Value interface {
+	Value() (string, error)
 	Usage() string
 }
 
-func Get(g ...Getter) (string, error) {
+func Get(g ...Value) (string, error) {
 	var usages []string
 	for _, gg := range g {
-		v, err := gg.Get()
+		v, err := gg.Value()
 		if err == Missing {
 			usages = append(usages, gg.Usage())
 			continue
@@ -39,13 +39,13 @@ func Get(g ...Getter) (string, error) {
 	return "", fmt.Errorf("must set one of: %s", strings.Join(usages, ", "))
 }
 
-func Env(name string) Getter {
-	return envGetter(name)
+func Env(name string) Value {
+	return envValue(name)
 }
 
-type envGetter string
+type envValue string
 
-func (e envGetter) Get() (string, error) {
+func (e envValue) Value() (string, error) {
 	v := os.Getenv(string(e))
 	if v == "" {
 		return "", Missing
@@ -53,14 +53,14 @@ func (e envGetter) Get() (string, error) {
 	return v, nil
 }
 
-func (e envGetter) Usage() string {
+func (e envValue) Usage() string {
 	return fmt.Sprintf("environment variable %s", e)
 }
 
 var Missing error = errors.New("missing")
 
 type EvalError struct {
-	g   Getter
+	g   Value
 	err error
 }
 
@@ -70,7 +70,7 @@ func (e EvalError) Error() string {
 
 type defaulter string
 
-func (d defaulter) Get() (string, error) {
+func (d defaulter) Value() (string, error) {
 	return string(d), nil
 }
 
@@ -78,6 +78,6 @@ func (d defaulter) Usage() string {
 	return fmt.Sprintf("default value %s", d)
 }
 
-func Default(v string) Getter {
+func Default(v string) Value {
 	return defaulter(v)
 }

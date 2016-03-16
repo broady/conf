@@ -60,7 +60,7 @@ type alwaysError struct {
 	e error
 }
 
-func (a alwaysError) Get() (string, error) {
+func (a alwaysError) Value() (string, error) {
 	return "", a.e
 }
 
