@@ -49,10 +49,10 @@ func TestMissing(t *testing.T) {
 
 	got, err := Get(alwaysError{Missing}, Default(want))
 	if err != nil {
-		t.Error("want nil err, got %#v", err)
+		t.Errorf("want nil err, got %#v", err)
 	}
 	if want != got {
-		t.Error("want %s, got %s", want, got)
+		t.Errorf("want %s, got %s", want, got)
 	}
 }
 
