@@ -3,8 +3,8 @@ package gcloudconf
 import (
 	"fmt"
 
+	"cloud.google.com/go/compute/metadata"
 	"google.golang.org/api/compute/v1"
-	"google.golang.org/cloud/compute/metadata"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
